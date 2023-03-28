@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=>, initial-scale=1.0">
+    <title>Byward Bar Hoppers</title>
+</head>
+<body>
+
+    <div id="map" style = "width:900px; height:580px"></div>
+    <script>
+        var map = L.map('map').setView([45.428477, -75.691509], 16);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+        $.getJSON("Bars_file.json", function(geojson){       
+
+            L.control.scale({
+                metric: true,
+                imperial: true,
+                maxWidth: 100,
+                position: 'bottomleft'
+            }).addTo(map);
+
+            L.geoJSON(geojson, {
+                onEachFeature: function(feature, layer){
+                    // Custom Markers
+                    for (var key in feature.properties) {
+                        if(key === 'Bar_Type') {
+                            var norm_icon = [25, 25];
+                            if(feature.properties[key] === "Cocktail") {
+                                var test = new L.Icon({
+                                    iconUrl: "Cocktail.png",
+                                    iconSize: norm_icon,
+                                    popupAnchor: [0, -10]
+                                })
+                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
+                            }
+                            if(feature.properties[key] === "Pub") {
+                                var test = new L.Icon({
+                                    iconUrl: "Pub.png",
+                                    iconSize: norm_icon,
+                                    popupAnchor: [0, -10]
+                                })
+                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
+                            }
+                            if(feature.properties[key] === "Wine") {
+                                var test = new L.Icon({
+                                    iconUrl: "Wine.png",
+                                    iconSize: norm_icon,
+                                    popupAnchor: [0, -15]
+                                })
+                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
+                            }
+                            if(feature.properties[key] === "Craft Beer") {
+                                var test = new L.Icon({
+                                    iconUrl: "Craft_Beer.png",
+                                    iconSize: norm_icon,
+                                    popupAnchor: [0, -15]
+                                })
+                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
+                            }
+                    
+                        
+                        // Clickable Changeable Content
+                        marker.on('click', function (e){
+                            document.getElementById("bar_name").innerHTML = feature.properties.Name;
+                            document.getElementById("type_of_bar").innerHTML = "Bar Type: " + feature.properties.Bar_Type;
+                            document.getElementById("bar_rating").innerHTML = feature.properties.Rating + " Stars (" + feature.properties.Total_Reviews + " Total Reviews)";
+                            document.getElementById("bar_tags").innerHTML = "Tags: " + feature.properties.Tags;
+                            document.getElementById("bar_address").innerHTML = feature.properties.Address + ", " + feature.properties.Postal_Code;
+                            document.getElementById("Contact").innerHTML = "Contact Us!"
+                            document.getElementById("bar_phone").innerHTML = "Phone Number: " + feature.properties.Phone;
+                            document.getElementById("bar_email").innerHTML = "Email Address: " + feature.properties.Email; 
+                            document.getElementById("bar_website").innerHTML = "Website: " + feature.properties.Website;
+                        })
+
+                        // Hover Popup Content
+                        var name = feature.properties.Name;
+                        var rating = feature.properties.Rating
+                        var popupContent = []
+
+                        popupContent.push(name)
+                        popupContent.push("Rating: " + rating);
+                        
+                        marker.bindPopup(popupContent.join("<br/>"));
+                        marker.on('mouseover', function (e){
+                            this.openPopup();
+                        })
+                        marker.on('mouseout', function (e){
+                            this.closePopup();
+                        })
+                        }
+                        
+                    }
+                }
+            })
+          });
+
+    </script>
+
+    <div id="Bar Info">
+        <h2 id="bar_name"></h2>
+        <p id="type_of_bar"></p>
+        <p id="bar_rating"></p>
+        <p id="bar_tags"></p>
+        <p id="bar_address"></p>
+        <h3 id="Contact"></h3>
+        <p id="bar_phone"></p>
+        <p id="bar_email"></p>
+        <p id="bar_website"></p>
+    </div>
+
+</body>
+</html>
