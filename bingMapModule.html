@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <style type='text/css'>body{margin:0;padding:0;overflow:hidden;font-family:'Segoe UI',Helvetica,Arial,Sans-Serif}</style>
+</head>
+<body>
+    <div id='directionsPanel' style="position: relative; width: 400px; height: 1000px; overflow-y: scroll; float: left; "></div>
+   
+    <div id='myMap' style=' width: 100vw; height: 100vh; margin-left: 400px;'></div>
+ 
+    <script type='text/javascript'>
+         function GetMap() {
+                var map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
+
+                    center: new Microsoft.Maps.Location(45.4271, -75.6923),
+                    zoom: 12
+                });
+                Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
+                    var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+
+                    directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.walking });
+                    var waypoint1 = new Microsoft.Maps.Directions.Waypoint({ address: 'Dominion Tavern', location: new Microsoft.Maps.Location(45.428216, -75.69382927) });
+                    var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ address: 'Mavericks', location: new Microsoft.Maps.Location(45.428022, -75.68810643) });
+                    var waypoint3 = new Microsoft.Maps.Directions.Waypoint({ address: 'Mercury Lounge', location: new Microsoft.Maps.Location(45.427452, -75.69256559) });
+                    var waypoint4 = new Microsoft.Maps.Directions.Waypoint({ address: 'The Rainbow Bistro-Garde Bar', location: new Microsoft.Maps.Location(45.429668, -75.6938682) });
+                    var waypoint5 = new Microsoft.Maps.Directions.Waypoint({ address: 'Cafe Dekcuf', location: new Microsoft.Maps.Location(45.428132, -75.68814527) });
+                    directionsManager.addWaypoint(waypoint1);
+                    directionsManager.addWaypoint(waypoint2);
+                    directionsManager.addWaypoint(waypoint3);
+                    directionsManager.addWaypoint(waypoint4);
+                    directionsManager.addWaypoint(waypoint5);
+    
+                    directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('directionsPanel') });
+                    directionsManager.calculateDirections();
+                });
+                
+            }
+     
+    </script>
+    <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Aq3DLZAix2sL8UsHM7l9gEO82omrdPh2EZ4OTypv65rB_KeUkx9t9CetvZYrVXNB' async defer></script>
+</body>
+</html>
