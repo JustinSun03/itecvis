@@ -5,22 +5,112 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=>, initial-scale=1.0">
+    <style type='text/css'>
+        body{
+            margin:0;
+            padding:0;
+            overflow: hidden;
+            font-family:'Segoe UI',Helvetica,Arial,Sans-Serif
+        }
+        #map{
+            margin-top: -4px;
+            width:100vw;
+            height: 94.8vh;
+            z-index: 1;
+        }
+        .TopNav {
+            display:inline-block; 
+            width : 100vw; 
+            height: 50px; 
+            background-color: black;
+            overflow: hidden;
+        }
+        .TopNav a{
+            float: right;
+            color: white;
+            background-color: #ff1919;
+            text-align: center;
+            text-decoration: none;
+            padding: 14px 16px;
+            font-size: 20px;
+
+        }
+        .TopNav a:hover{
+            background-color: #ff5c5c;
+        }
+        .BarInfo {
+            visibility: hidden;
+            position: absolute;
+            width: 300px;
+            height: 500px;
+            background-color: white;
+            z-index: 2;
+            left: 80vw;
+            top: 10vh;
+
+        }
+        .BarInfo p{
+            padding-left: 10px;
+        }
+        .BarInfo h2{
+            text-align: center;
+            padding-left: 10px;
+        }
+        .BarInfo h3{
+            text-align: center;
+            padding-left: 10px;
+        }
+        .BarInfo a{
+            margin-left: 10px;
+            background-color: green;
+            color: aliceblue;
+            padding: 12px 14px;
+            float: left;
+        }
+        .BarInfo #close{
+            margin-left: 10px;
+            background-color: green;
+            color: aliceblue;
+            padding: 12px 14px;
+            float: right;
+        }
+        </style>
     <title>Byward Bar Hoppers</title>
 </head>
 <body>
+    
 
-    <div id="map" style = "width:900px; height:580px"></div>
-    <script>
+    <div class="TopNav">
+        <a href="bingMapModule.html">Begin Route</a>
+    </div>
+
+    <div class="BarInfo" id="BarPopUp">
+        <h2 id="bar_name"></h2>
+        <p id="type_of_bar"></p>
+        <p id="bar_rating"></p>
+        <p id="bar_tags"></p>
+        <p id="bar_address"></p>
+        <h3 id="Contact"></h3>
+        <p id="bar_phone"></p>
+        <p id="bar_email"></p>
+        <a id="bar_website"></a>
+    </div>
+
+    <div id="map" style = ></div>
+    <script type="module">
+        import geojson from './Bars_file.json' assert {type: 'json'};
         var map = L.map('map').setView([45.428477, -75.691509], 16);
+        
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-        $.getJSON("Bars_file.json", function(geojson){       
+             
 
             L.control.scale({
                 metric: true,
@@ -79,7 +169,17 @@
                             document.getElementById("Contact").innerHTML = "Contact Us!"
                             document.getElementById("bar_phone").innerHTML = "Phone Number: " + feature.properties.Phone;
                             document.getElementById("bar_email").innerHTML = "Email Address: " + feature.properties.Email; 
-                            document.getElementById("bar_website").innerHTML = "Website: " + feature.properties.Website;
+                            document.getElementById("bar_website").innerHTML = "Website"
+                            document.getElementById("bar_website").setAttribute("href", feature.properties.Website);
+
+                            //Pop up function
+                            var popUp = document.getElementById("BarPopUp");
+                            if(popUp.style.visibility === "hidden"){
+                                popUp.style.visibility = "visible";
+                            }
+                            else{
+                                popUp.style.visibility = "visible";
+                            }
                         })
 
                         // Hover Popup Content
@@ -102,21 +202,11 @@
                     }
                 }
             })
-          });
+
 
     </script>
 
-    <div id="Bar Info">
-        <h2 id="bar_name"></h2>
-        <p id="type_of_bar"></p>
-        <p id="bar_rating"></p>
-        <p id="bar_tags"></p>
-        <p id="bar_address"></p>
-        <h3 id="Contact"></h3>
-        <p id="bar_phone"></p>
-        <p id="bar_email"></p>
-        <p id="bar_website"></p>
-    </div>
+
 
 </body>
 </html>
