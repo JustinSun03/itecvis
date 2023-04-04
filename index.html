@@ -3,35 +3,43 @@
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=>, initial-scale=1.0">
     <style type='text/css'>
         body{
+            background-color: white;
             margin:0;
             padding:0;
             overflow: hidden;
             font-family:'Segoe UI',Helvetica,Arial,Sans-Serif
         }
         #map{
-            margin-top: -4px;
+            position:relative;
             width:100vw;
-            height: 94.8vh;
+            height: 94.5vh;
             z-index: 1;
         }
         .TopNav {
-            display:inline-block; 
+            position:relative;
             width : 100vw; 
-            height: 50px; 
+            height: 55px; 
             background-color: black;
             overflow: hidden;
+        }
+        .TopNav #routeButton{
+            background-color: rgb(15, 112, 23);
+        }
+
+        .TopNav #routeButton:hover{
+            background-color: rgb(31, 161, 26);
         }
         .TopNav a{
             float: right;
             color: white;
-            background-color: #ff1919;
+            background-color: black;
             text-align: center;
             text-decoration: none;
             padding: 14px 16px;
@@ -39,7 +47,16 @@
 
         }
         .TopNav a:hover{
-            background-color: #ff5c5c;
+            background-color: #303030;
+        }
+        .TopNav .iconVisible{
+            width: 30px;
+            height: 30px;
+        }
+        .TopNav .iconHidden{
+            width: 30px;
+            height: 30px;
+            filter: opacity(0.5);
         }
         .BarInfo {
             visibility: hidden;
@@ -68,7 +85,11 @@
             background-color: green;
             color: aliceblue;
             padding: 12px 14px;
+            text-decoration: none;
             float: left;
+        }
+        .BarInfo a:hover{
+            background-color: rgb(0, 194, 0);
         }
         .BarInfo #close{
             margin-left: 10px;
@@ -76,7 +97,64 @@
             color: aliceblue;
             padding: 12px 14px;
             float: right;
+            cursor: pointer;
         }
+        .BarInfo #close:hover{
+            background-color: rgb(0, 194, 0);
+        }
+        .TopNav #cockFilter1{
+            left: 50vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #cockFilter2{
+            left: 50vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #pubFilter1{
+            left: 46vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #pubFilter2{
+            left: 46vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #wineFilter1{
+            left: 42vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #wineFilter2{
+            left: 42vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #cbFilter1{
+            left: 54vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #cbFilter2{
+            left: 54vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+
         </style>
     <title>Byward Bar Hoppers</title>
 </head>
@@ -84,10 +162,27 @@
     
 
     <div class="TopNav">
-        <a href="bingMapModule.html">Begin Route</a>
+        <a id="routeButton" href="bingMapModule.html">Begin Route</a>
+
+        <a id="cockFilter1" onclick="hideCock()"><img class="iconVisible" src="Cocktail.png"></a>
+        <a id="cockFilter2" onclick="hideCock()"><img class="iconHidden" src="Cocktail.png"></a>
+
+        <a id="pubFilter1" onclick="hidePub()"><img class="iconVisible" src="Pub.png"></a>
+        <a id="pubFilter2" onclick="hidePub()"><img class="iconHidden" src="Pub.png"></a>
+
+        <a id="wineFilter1" onclick="hideWine()"><img class="iconVisible" src="Wine.png"></a>
+        <a id="wineFilter2" onclick="hideWine()"><img class="iconHidden" src="Wine.png"></a>
+
+        <a id="cbFilter1" onclick="hideCb()"><img class="iconVisible" src="Craft_Beer.png"></a>
+        <a id="cbFilter2" onclick="hideCb()"><img class="iconHidden" src="Craft_Beer.png"></a>
+    
+        
     </div>
 
+    <div id="map" style = ></div>
+
     <div class="BarInfo" id="BarPopUp">
+        <span id="close" onclick="closePop()">X</span>
         <h2 id="bar_name"></h2>
         <p id="type_of_bar"></p>
         <p id="bar_rating"></p>
@@ -96,114 +191,225 @@
         <h3 id="Contact"></h3>
         <p id="bar_phone"></p>
         <p id="bar_email"></p>
-        <a id="bar_website"></a>
+        <a id="bar_website" target="_blank" rel="noopener noreferrer"></a>
     </div>
+    <script>
+        function hideCock(){
+            var button1 = document.getElementById("cockFilter1");
+            var button2 = document.getElementById("cockFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hidePub(){
+            var button1 = document.getElementById("pubFilter1");
+            var button2 = document.getElementById("pubFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hideWine(){
+            var button1 = document.getElementById("wineFilter1");
+            var button2 = document.getElementById("wineFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hideCb(){
+            var button1 = document.getElementById("cbFilter1");
+            var button2 = document.getElementById("cbFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function closePop() {
+        var popUp = document.getElementById("BarPopUp");
+        popUp.style.visibility = "hidden";
+        }
 
-    <div id="map" style = ></div>
-    <script type="module">
-        import geojson from './Bars_file.json' assert {type: 'json'};
         var map = L.map('map').setView([45.428477, -75.691509], 16);
-        
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-             
+        $.getJSON("Bars_file.json", function (geojson) {
 
-            L.control.scale({
-                metric: true,
-                imperial: true,
-                maxWidth: 100,
-                position: 'bottomleft'
-            }).addTo(map);
+        L.control.scale({
+            metric: true,
+            imperial: true,
+            maxWidth: 100,
+            position: 'bottomleft'
+        }).addTo(map);
 
-            L.geoJSON(geojson, {
-                onEachFeature: function(feature, layer){
-                    // Custom Markers
-                    for (var key in feature.properties) {
-                        if(key === 'Bar_Type') {
-                            var norm_icon = [25, 25];
-                            if(feature.properties[key] === "Cocktail") {
-                                var test = new L.Icon({
-                                    iconUrl: "Cocktail.png",
-                                    iconSize: norm_icon,
-                                    popupAnchor: [0, -10]
-                                })
-                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
-                            }
-                            if(feature.properties[key] === "Pub") {
-                                var test = new L.Icon({
-                                    iconUrl: "Pub.png",
-                                    iconSize: norm_icon,
-                                    popupAnchor: [0, -10]
-                                })
-                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
-                            }
-                            if(feature.properties[key] === "Wine") {
-                                var test = new L.Icon({
-                                    iconUrl: "Wine.png",
-                                    iconSize: norm_icon,
-                                    popupAnchor: [0, -15]
-                                })
-                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
-                            }
-                            if(feature.properties[key] === "Craft Beer") {
-                                var test = new L.Icon({
-                                    iconUrl: "Craft_Beer.png",
-                                    iconSize: norm_icon,
-                                    popupAnchor: [0, -15]
-                                })
-                                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: test}).addTo(map);
-                            }
-                    
-                        
-                        // Clickable Changeable Content
-                        marker.on('click', function (e){
-                            document.getElementById("bar_name").innerHTML = feature.properties.Name;
-                            document.getElementById("type_of_bar").innerHTML = "Bar Type: " + feature.properties.Bar_Type;
-                            document.getElementById("bar_rating").innerHTML = feature.properties.Rating + " Stars (" + feature.properties.Total_Reviews + " Total Reviews)";
-                            document.getElementById("bar_tags").innerHTML = "Tags: " + feature.properties.Tags;
-                            document.getElementById("bar_address").innerHTML = feature.properties.Address + ", " + feature.properties.Postal_Code;
-                            document.getElementById("Contact").innerHTML = "Contact Us!"
-                            document.getElementById("bar_phone").innerHTML = "Phone Number: " + feature.properties.Phone;
-                            document.getElementById("bar_email").innerHTML = "Email Address: " + feature.properties.Email; 
-                            document.getElementById("bar_website").innerHTML = "Website"
-                            document.getElementById("bar_website").setAttribute("href", feature.properties.Website);
+        L.geoJSON(geojson, {
+            onEachFeature: function (feature, layer) {
+               
+                // Empty Arrays for Markers
+                var norm_icon = [25, 25];
+                var cocks = [];
+                var pubs = [];
+                var wines = [];
+                var cbs = [];
 
-                            //Pop up function
-                            var popUp = document.getElementById("BarPopUp");
-                            if(popUp.style.visibility === "hidden"){
-                                popUp.style.visibility = "visible";
-                            }
-                            else{
-                                popUp.style.visibility = "visible";
-                            }
+                 // Custom Markers
+                for (var key in feature.properties) {
+                    if (key === 'Bar_Type') {
+                    if (feature.properties[key] === "Cocktail") {
+                        var cocktailIcon = new L.Icon({
+                            iconUrl: "Cocktail.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -10],
                         })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: cocktailIcon
+                        });
+                        cocks.push(marker);
 
-                        // Hover Popup Content
-                        var name = feature.properties.Name;
-                        var rating = feature.properties.Rating
-                        var popupContent = []
-
-                        popupContent.push(name)
-                        popupContent.push("Rating: " + rating);
-                        
-                        marker.bindPopup(popupContent.join("<br/>"));
-                        marker.on('mouseover', function (e){
-                            this.openPopup();
+                    }
+                    if (feature.properties[key] === "Pub") {
+                        var pubicon = new L.Icon({
+                            iconUrl: "Pub.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -10]
                         })
-                        marker.on('mouseout', function (e){
-                            this.closePopup();
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: pubicon
+                        });
+                        pubs.push(marker);
+                    }
+                    if (feature.properties[key] === "Wine") {
+                        var wineicon = new L.Icon({
+                            iconUrl: "Wine.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -15]
                         })
-                        }
-                        
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: wineicon
+                        });
+                        wines.push(marker);
+                    }
+                    if (feature.properties[key] === "Craft Beer") {
+                        var cbicon = new L.Icon({
+                            iconUrl: "Craft_Beer.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -15]
+                        })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: cbicon
+                        });
+                        cbs.push(marker);
+                    }
                     }
                 }
-            })
+
+                // layers
+                var cockLayer = L.layerGroup(cocks);
+                var pubLayer = L.layerGroup(pubs);
+                var winesLayer = L.layerGroup(wines);
+                var cbLayer = L.layerGroup(cbs)
+
+                cockLayer.addTo(map);
+                pubLayer.addTo(map);
+                winesLayer.addTo(map);
+                cbLayer.addTo(map);
 
 
+                var cockFilterClose = document.getElementById("cockFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(cockLayer);
+                });
+                var cockFilterOpen = document.getElementById("cockFilter2").addEventListener('click', function (event) {
+                    map.addLayer(cockLayer);
+                })
+                var pubFilterClose = document.getElementById("pubFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(pubLayer);
+                });
+                var pubFilterOpen = document.getElementById("pubFilter2").addEventListener('click', function (event) {
+                    map.addLayer(pubLayer);
+                })
+                var wineFilterClose = document.getElementById("wineFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(winesLayer);
+                });
+                var wineFilterOpen = document.getElementById("wineFilter2").addEventListener('click', function (event) {
+                    map.addLayer(winesLayer);
+                })
+                var cbFilterClose = document.getElementById("cbFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(cbLayer);
+                });
+                var cbFilterOpen = document.getElementById("cbFilter2").addEventListener('click', function (event) {
+                    map.addLayer(cbLayer);
+                })
+                // Clickable Changeable Content
+                marker.on('click', function (e) {
+                    document.getElementById("bar_name").innerHTML = feature.properties.Name;
+                    document.getElementById("type_of_bar").innerHTML = "Bar Type: " + feature.properties.Bar_Type;
+                    document.getElementById("bar_rating").innerHTML = feature.properties.Rating + " Stars (" + feature.properties.Total_Reviews + " Total Reviews)";
+                    document.getElementById("bar_tags").innerHTML = "Tags: " + feature.properties.Tags;
+                    document.getElementById("bar_address").innerHTML = feature.properties.Address + ", " + feature.properties.Postal_Code;
+                    document.getElementById("Contact").innerHTML = "Contact Us!"
+                    document.getElementById("bar_phone").innerHTML = "Phone Number: " + feature.properties.Phone;
+                    document.getElementById("bar_email").innerHTML = "Email Address: " + feature.properties.Email;
+                    document.getElementById("bar_website").innerHTML = "Website"
+                    document.getElementById("bar_website").setAttribute("href", feature.properties.Website);
+
+                    //Pop up function
+                    var popUp = document.getElementById("BarPopUp");
+                    if (popUp.style.visibility === "hidden") {
+                    popUp.style.visibility = "visible";
+                    } else {
+                    popUp.style.visibility = "visible";
+                    }
+                })
+
+
+                // Hover Popup Content
+                var name = feature.properties.Name;
+                var rating = feature.properties.Rating
+                var bigIcon = marker.options.icon;
+
+                var popupContent = []
+
+                popupContent.push(name)
+                popupContent.push("Rating: " + rating);
+
+                marker.bindPopup(popupContent.join("<br/>"));
+                marker.on('mouseover', function (e) {
+                    bigIcon.options.iconSize = [35, 35];
+                    marker.setIcon(bigIcon);
+
+                    this.openPopup();
+                })
+                marker.on('mouseout', function (e) {
+                    bigIcon.options.iconSize = [25, 25];
+                    marker.setIcon(bigIcon);
+
+                    this.closePopup();
+                })
+
+            }
+        })
+        });
     </script>
 
 
