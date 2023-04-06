@@ -29,7 +29,24 @@
             background-color: rgb(29, 29, 29);
             overflow: hidden;
         }
+        .TopNav #routeButtonInactive{
+            position: absolute;
+            visibility: visible;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 50px;
+            margin-top: 4px;
+            margin-right: 2px;
+            background-color: rgb(70, 70, 70);
+            text-align: center;
+            text-decoration: none;
+            padding: 15px 15px;
+            font-size: 20px;
+            cursor: pointer;
+            right: 0vw;
+        }
         .TopNav #routeButton{
+            position: absolute;
+            visibility: hidden;
             box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
             border-radius: 50px;
             margin-top: 4px;
@@ -39,6 +56,7 @@
             text-decoration: none;
             padding: 15px 15px;
             font-size: 20px;
+            right: 0vw;
         }
         .TopNav #routeButton:hover{
             background-color: rgb(31, 161, 26);
@@ -185,6 +203,8 @@
 <body>
     <div class="TopNav">
         <a id="routeButton" href="bingMapModule.html">Begin Route</a>
+        <a id="routeButtonInactive">Begin Route</a>
+        
 
         <a id="cockFilter1" onclick="hideCock()"><img class="iconVisible" src="Cocktail.png"></a>
         <a id="cockFilter2" onclick="hideCock()"><img class="iconHidden" src="Cocktail.png"></a>
@@ -266,6 +286,10 @@
         }
         function closePop() {
         var popUp = document.getElementById("BarPopUp");
+        var routeActive = document.getElementById("routeButton");
+        var routeInactive = document.getElementById("routeButtonInactive");
+        routeInactive.style.visibility = "visible";
+        routeActive.style.visibility = "hidden";
         popUp.style.visibility = "hidden";
         }
     </script>
@@ -416,10 +440,17 @@
                     }
                     //Pop up function
                     var popUp = document.getElementById("BarPopUp");
+                    var routeActive = document.getElementById("routeButton");
+                    var routeInactive = document.getElementById("routeButtonInactive");
                     if (popUp.style.visibility === "hidden") {
-                    popUp.style.visibility = "visible";
+                        popUp.style.visibility = "visible";
+                        routeActive.style.visibility = "visible";
+                        routeInactive.style.visibility = "hidden";
                     } else {
-                    popUp.style.visibility = "visible";
+                        popUp.style.visibility = "visible";
+                        routeActive.style.visibility = "visible";
+                        routeInactive.style.visibility = "hidden";
+                    
                     }
                 })
 
