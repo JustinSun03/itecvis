@@ -290,7 +290,7 @@
             onEachFeature: function (feature, layer) {
                
                 // Empty Arrays for Markers
-                var norm_icon = [25, 25];
+                var norm_icon = [30, 30];
                 var cocks = [];
                 var pubs = [];
                 var wines = [];
@@ -442,7 +442,7 @@
                     this.openPopup();
                 })
                 marker.on('mouseout', function (e) {
-                    bigIcon.options.iconSize = [25, 25];
+                    bigIcon.options.iconSize = [30, 30];
                     marker.setIcon(bigIcon);
 
                     this.closePopup();
