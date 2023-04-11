@@ -20,6 +20,7 @@
                 background-size: cover;
                 background-position-y: -150px;
                 box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+                
 
             }
             .Banner-Content{
@@ -29,6 +30,24 @@
                 color:aliceblue;
                 text-align: center;
    
+            }
+            .Banner-Content #logo{
+                position: relative;
+                animation-name: fading;
+                animation-duration: .1s;
+                animation-delay: 2s;
+                animation-iteration-count: 6;
+                z-index: 2;
+            }
+
+            @keyframes fading{
+                from{opacity: 1;}
+                to{opacity: 0.6;}
+            }
+            .Banner-Content #logo2{
+                position: absolute;
+                z-index: 1;
+                left: 420px;
             }
             button{
                 background-color: rgb(255, 217, 0);
@@ -50,6 +69,7 @@
            
             .BodyContent{
                 display: block;
+                margin-top: 30px;
             }
             .BodyContent a{
                 position: relative;
@@ -61,6 +81,7 @@
             .BodyContent h1{
                 color: aliceblue;
                 position: relative;
+                margin-bottom: -30px;
                 margin-left: 20px;
             }
             .BodyContent #headerRight{
@@ -107,7 +128,8 @@
 
         <div class="Banner-Bg">
             <div class="Banner-Content">
-                
+                <a id="logo" href="Index.html"><img src="Images/litup.png"></a>
+                <img id="logo2" src="Images/notlitup.png">
                 <h1>Welcome To Byward's Bar Hopping Sytem</h1>
                 <h2>Begin your journey today for free and with ease!</h2>
                 <button id="startButt">Start Journey</button>
@@ -115,7 +137,7 @@
         </div>
         
         <div class="BodyContent">
-            <a id="logo" href="Index.html"><img src="Images/litup.png"></a>
+            
             <h1>About Us</h1>
             <div class="AboutUs">
                 <p>Our mission is to enhance the nightlife experience of locals and visitors alike by providing a comprehensive and user-friendly platform for barhopping in the vibrant Byward Market area. Our app offers personalized recommendations based on individual preferences, real-time updates on drink specials and events, and a seamless way to explore the area's diverse and dynamic bar scene. We are committed to promoting responsible drinking and fostering a sense of community among bar-goers, while supporting local businesses and contributing to the cultural and economic vitality of the neighborhood.
