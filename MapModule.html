@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=>, initial-scale=1.0">
+    <style type='text/css'>
+        body{
+            background-color: rgb(0, 0, 0);
+            margin:0;
+            padding:0;
+            overflow: hidden;
+            font-family:'Segoe UI',Helvetica,Arial,Sans-Serif
+        }
+        #map{
+            position:absolute;
+            margin-top: 65px;
+            width:100vw;
+            height: 93.5vh;
+            z-index: 1;
+        }
+        .TopNav {
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            position:absolute;
+            width : 100vw; 
+            height: 65px; 
+            background-color: rgb(29, 29, 29);
+            overflow: hidden;
+            z-index: 10;
+        }
+        .TopNav #logo{
+            background-image: url("Images/notlitup.png");
+            background-position: center;
+            background-size: 100%;
+            position: absolute;
+            height: 20px;
+            width: 400px;
+            margin: 5px;
+
+        }
+        .TopNav #logo:hover{
+            background-color: rgba(0, 0, 0, 0);
+            background-image: url("Images/litup.png");
+            background-size: 100%;
+            background-position: center;
+        }
+        .TopNav #routeButtonInactive{
+            position: absolute;
+            visibility: visible;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 50px;
+            margin-top: 4px;
+            margin-right: 2px;
+            background-color: rgb(70, 70, 70);
+            text-align: center;
+            text-decoration: none;
+            padding: 15px 15px;
+            font-size: 20px;
+            cursor: not-allowed;
+            right: 0vw;
+        }
+        .TopNav #routeButton{
+            position: absolute;
+            visibility: hidden;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 50px;
+            margin-top: 4px;
+            margin-right: 2px;
+            background-color: rgb(15, 112, 23);
+            text-align: center;
+            text-decoration: none;
+            padding: 15px 15px;
+            font-size: 20px;
+            right: 0vw;
+        }
+        .TopNav #routeButton:hover{
+            background-color: rgb(31, 161, 26);
+        }
+        .TopNav a{
+            
+            padding: 15px 15px;
+            float: right;
+            color: white;
+
+        }
+        .TopNav a:hover{
+            background-color: #303030;
+        }
+        .TopNav .iconVisible{
+            width: 32px;
+            height: 32px;
+        }
+        .TopNav .iconHidden{
+            width: 32px;
+            height: 32px;
+            filter: opacity(0.5);
+        }
+        .BarInfo {
+            visibility: hidden;
+            position: absolute;
+            width: 400px;
+            height: 700px;
+            background-color: rgb(242, 252, 255);
+            z-index: 2;
+            right: 75px;
+            top: 15vh;
+
+        }
+        .BarInfo{
+            border-radius: 25px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+        }
+        .BarInfo p{
+            padding-left: 20px;
+        }
+        .BarInfo h2{
+            position: relative;
+            text-align: center;
+            padding-left: 10px;
+        }
+        .BarInfo h3{
+            text-align: center;
+            padding-left: 10px;
+        }
+        .BarInfo a{
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 25px;
+            margin-left: 10px;
+            background-color: rgb(43, 144, 228);
+            color: aliceblue;
+            padding: 12px 14px;
+            text-decoration: none;
+            float: left;
+        }
+        .BarInfo a:hover{
+            background-color: rgb(86, 166, 231);
+            color: black;
+        }
+        .BarInfo #close{
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 25px;
+            background-color: rgb(255, 61, 61);
+            color: aliceblue;
+            padding: 12px 14px;
+            left: 100%;
+            position: absolute;
+            cursor: pointer;
+        }
+        .BarInfo img{
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+            border-radius: 25px;
+            width: 375px;
+            height: 211px;
+            margin-left: 12px;
+
+        }
+        .BarInfo #close:hover{
+            background-color: rgb(255, 127, 127);
+            color: black;
+        }
+        .TopNav #cockFilter1{
+            left: 50vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #cockFilter2{
+            left: 50vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #pubFilter1{
+            left: 46vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #pubFilter2{
+            left: 46vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #wineFilter1{
+            left: 42vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #wineFilter2{
+            left: 42vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+        .TopNav #cbFilter1{
+            left: 54vw;
+            visibility: visible;
+            position: absolute;
+            z-index: 9;
+            
+        }
+        .TopNav #cbFilter2{
+            left: 54vw;
+            visibility: hidden;
+            position: absolute;
+            
+        }
+
+        </style>
+    <title>Byward Bar Hoppers</title>
+    <link rel="icon" type="image/x-icon" href="Pub.png"></link>
+</head>
+<body>
+    <div class="TopNav">
+        <a id="logo" href="index.html"></a>
+        <a id="routeButton" href="bingMapModule.html">Begin Route</a>
+        <a id="routeButtonInactive">Begin Route</a>
+        
+
+        <a id="cockFilter1" onclick="hideCock()"><img class="iconVisible" src="Images/Cocktail.png"></a>
+        <a id="cockFilter2" onclick="hideCock()"><img class="iconHidden" src="Images/Cocktail.png"></a>
+
+        <a id="pubFilter1" onclick="hidePub()"><img class="iconVisible" src="Images/Pub.png"></a>
+        <a id="pubFilter2" onclick="hidePub()"><img class="iconHidden" src="Images/Pub.png"></a>
+
+        <a id="wineFilter1" onclick="hideWine()"><img class="iconVisible" src="Images/Wine.png"></a>
+        <a id="wineFilter2" onclick="hideWine()"><img class="iconHidden" src="Images/Wine.png"></a>
+
+        <a id="cbFilter1" onclick="hideCb()"><img class="iconVisible" src="Images/Craft_Beer.png"></a>
+        <a id="cbFilter2" onclick="hideCb()"><img class="iconHidden" src="Images/Craft_Beer.png"></a>
+    </div>
+
+    <div id="map" style = ></div>
+
+    <div class="BarInfo" id="BarPopUp">
+        <a id="close" onclick="closePop()">X</a>
+        <h2 id="bar_name"></h2>
+        <img id="bar_img" src="#"></img>
+        <p id="type_of_bar"></p>
+        <p id="bar_rating"></p>
+        <p id="bar_tags"></p>
+        <p id="bar_address"></p>
+        <h3 id="Contact"></h3>
+        <p id="bar_phone"></p>
+        <p id="bar_email"></p>
+        <a id="bar_website" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+
+    <script>
+        function hideCock(){
+            var button1 = document.getElementById("cockFilter1");
+            var button2 = document.getElementById("cockFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hidePub(){
+            var button1 = document.getElementById("pubFilter1");
+            var button2 = document.getElementById("pubFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hideWine(){
+            var button1 = document.getElementById("wineFilter1");
+            var button2 = document.getElementById("wineFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function hideCb(){
+            var button1 = document.getElementById("cbFilter1");
+            var button2 = document.getElementById("cbFilter2");
+            if(button1.style.visibility != "hidden"){
+                button1.style.visibility = "hidden";
+                button2.style.visibility = "visible";
+            }
+            else{
+                button1.style.visibility = "visible";
+                button2.style.visibility = "hidden";
+            }
+        }
+        function closePop() {
+        var popUp = document.getElementById("BarPopUp");
+        var routeActive = document.getElementById("routeButton");
+        var routeInactive = document.getElementById("routeButtonInactive");
+        routeInactive.style.visibility = "visible";
+        routeActive.style.visibility = "hidden";
+        popUp.style.visibility = "hidden";
+        }
+    </script>
+
+    <script type="module">
+        import geojson from "./Bars_file.json" assert { type: 'json' };
+        var map = L.map('map').setView([45.428477, -75.691509], 16);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.control.scale({
+            metric: true,
+            imperial: true,
+            maxWidth: 100,
+            position: 'bottomleft'
+        }).addTo(map);
+
+        L.geoJSON(geojson, {
+            onEachFeature: function (feature, layer) {
+               
+                // Empty Arrays for Markers
+                var norm_icon = [30, 30];
+                var cocks = [];
+                var pubs = [];
+                var wines = [];
+                var cbs = [];
+
+                 // Custom Markers
+                for (var key in feature.properties) {
+                    if (key === 'Bar_Type') {
+                    if (feature.properties[key] === "Cocktail") {
+                        var cocktailIcon = new L.Icon({
+                            iconUrl: "Images/Cocktail.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -10],
+                        })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: cocktailIcon
+                        });
+                        cocks.push(marker);
+
+                    }
+                    if (feature.properties[key] === "Pub") {
+                        var pubicon = new L.Icon({
+                            iconUrl: "Images/Pub.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -10]
+                        })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: pubicon
+                        });
+                        pubs.push(marker);
+                    }
+                    if (feature.properties[key] === "Wine") {
+                        var wineicon = new L.Icon({
+                            iconUrl: "Images/Wine.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -15]
+                        })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: wineicon
+                        });
+                        wines.push(marker);
+                    }
+                    if (feature.properties[key] === "Craft Beer") {
+                        var cbicon = new L.Icon({
+                            iconUrl: "Images/Craft_Beer.png",
+                            iconSize: norm_icon,
+                            popupAnchor: [0, -15]
+                        })
+                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                            icon: cbicon
+                        });
+                        cbs.push(marker);
+                    }
+                    }
+                    
+                }
+
+                // layers
+                var cockLayer = L.layerGroup(cocks);
+                var pubLayer = L.layerGroup(pubs);
+                var winesLayer = L.layerGroup(wines);
+                var cbLayer = L.layerGroup(cbs)
+
+                cockLayer.addTo(map);
+                pubLayer.addTo(map);
+                winesLayer.addTo(map);
+                cbLayer.addTo(map);
+
+
+                var cockFilterClose = document.getElementById("cockFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(cockLayer);
+                });
+                var cockFilterOpen = document.getElementById("cockFilter2").addEventListener('click', function (event) {
+                    map.addLayer(cockLayer);
+                })
+                var pubFilterClose = document.getElementById("pubFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(pubLayer);
+                });
+                var pubFilterOpen = document.getElementById("pubFilter2").addEventListener('click', function (event) {
+                    map.addLayer(pubLayer);
+                })
+                var wineFilterClose = document.getElementById("wineFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(winesLayer);
+                });
+                var wineFilterOpen = document.getElementById("wineFilter2").addEventListener('click', function (event) {
+                    map.addLayer(winesLayer);
+                })
+                var cbFilterClose = document.getElementById("cbFilter1").addEventListener('click', function (event) {
+                    map.removeLayer(cbLayer);
+                });
+                var cbFilterOpen = document.getElementById("cbFilter2").addEventListener('click', function (event) {
+                    map.addLayer(cbLayer);
+                })
+                // Clickable Changeable Content
+                marker.on('click', function (e) {
+                    
+                    document.getElementById("bar_name").innerHTML = feature.properties.Name;
+                    
+                    document.getElementById("bar_rating").innerHTML = "⭐ " + feature.properties.Rating + " Stars (" + feature.properties.Total_Reviews + " Total Reviews)";
+                    document.getElementById("bar_tags").innerHTML = "🏷️ Tags: " + feature.properties.Tags;
+                    document.getElementById("bar_address").innerHTML = "📍 " + feature.properties.Address + ", " + feature.properties.Postal_Code;
+                    document.getElementById("Contact").innerHTML = "Contact Us!"
+                    document.getElementById("bar_phone").innerHTML = "📞 Phone Number: " + feature.properties.Phone;
+                    document.getElementById("bar_email").innerHTML = "📧 Email Address: " + feature.properties.Email;
+                    document.getElementById("bar_website").innerHTML = "Website"
+                    document.getElementById("bar_website").setAttribute("href", feature.properties.Website);
+
+                    //image stuff
+                    if(feature.properties.Bar_Type == "Pub"){
+                        document.getElementById("type_of_bar").innerHTML = "🍺 Bar Type: " + feature.properties.Bar_Type;
+                        document.getElementById("bar_img").src = "Images/pub_desc.png"
+                    }
+                    else if(feature.properties.Bar_Type == "Wine"){
+                        document.getElementById("type_of_bar").innerHTML = "🍷 Bar Type: " + feature.properties.Bar_Type;
+                        document.getElementById("bar_img").src = "Images/wine_desc.jpg"
+                    }
+                    else if(feature.properties.Bar_Type == "Cocktail"){
+                        document.getElementById("type_of_bar").innerHTML = "🍸 Bar Type: " + feature.properties.Bar_Type;
+                        document.getElementById("bar_img").src = "Images/cock_desc.jpg"
+                    }
+                    else if(feature.properties.Bar_Type == "Craft Beer"){
+                        document.getElementById("type_of_bar").innerHTML = "🥫 Bar Type: " + feature.properties.Bar_Type;
+                        document.getElementById("bar_img").src = "Images/cb_desc.jpg"
+                    }
+                    //Pop up function
+                    var popUp = document.getElementById("BarPopUp");
+                    var routeActive = document.getElementById("routeButton");
+                    var routeInactive = document.getElementById("routeButtonInactive");
+                    if (popUp.style.visibility === "hidden") {
+                        popUp.style.visibility = "visible";
+                        routeActive.style.visibility = "visible";
+                        routeInactive.style.visibility = "hidden";
+                    } else {
+                        popUp.style.visibility = "visible";
+                        routeActive.style.visibility = "visible";
+                        routeInactive.style.visibility = "hidden";
+                    
+                    }
+                })
+
+
+                // Hover Popup Content
+                var name = feature.properties.Name;
+                var rating = feature.properties.Rating
+                var bigIcon = marker.options.icon;
+
+                var popupContent = []
+
+                popupContent.push(name)
+                popupContent.push("⭐ Rating: " + rating);
+
+                marker.bindPopup(popupContent.join("<br/>"));
+                marker.on('mouseover', function (e) {
+                    bigIcon.options.iconSize = [35, 35];
+                    marker.setIcon(bigIcon);
+
+                    this.openPopup();
+                })
+                marker.on('mouseout', function (e) {
+                    bigIcon.options.iconSize = [30, 30];
+                    marker.setIcon(bigIcon);
+
+                    this.closePopup();
+                })
+            
+            }
+        
+        });
+    
+    </script>
+
+
+
+</body>
+</html>
