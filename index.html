@@ -1,489 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=>, initial-scale=1.0">
-    <style type='text/css'>
-        body{
-            background-color: rgb(0, 0, 0);
-            margin:0;
-            padding:0;
-            overflow: hidden;
-            font-family:'Segoe UI',Helvetica,Arial,Sans-Serif
-        }
-        #map{
-            position:relative;
-            width:100vw;
-            height: 93vh;
-            z-index: 1;
-        }
-        .TopNav {
-            position:relative;
-            width : 100vw; 
-            height: 65px; 
-            background-color: rgb(29, 29, 29);
-            overflow: hidden;
-        }
-        .TopNav #routeButtonInactive{
-            position: absolute;
-            visibility: visible;
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-            border-radius: 50px;
-            margin-top: 4px;
-            margin-right: 2px;
-            background-color: rgb(70, 70, 70);
-            text-align: center;
-            text-decoration: none;
-            padding: 15px 15px;
-            font-size: 20px;
-            cursor: not-allowed;
-            right: 0vw;
-        }
-        .TopNav #routeButton{
-            position: absolute;
-            visibility: hidden;
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-            border-radius: 50px;
-            margin-top: 4px;
-            margin-right: 2px;
-            background-color: rgb(15, 112, 23);
-            text-align: center;
-            text-decoration: none;
-            padding: 15px 15px;
-            font-size: 20px;
-            right: 0vw;
-        }
-        .TopNav #routeButton:hover{
-            background-color: rgb(31, 161, 26);
-        }
-        .TopNav a{
-            
-            padding: 15px 15px;
-            float: right;
-            color: white;
-            background-color: rgb(29, 29, 29);
-        }
-        .TopNav a:hover{
-            background-color: #303030;
-        }
-        .TopNav .iconVisible{
-            width: 32px;
-            height: 32px;
-        }
-        .TopNav .iconHidden{
-            width: 32px;
-            height: 32px;
-            filter: opacity(0.5);
-        }
-        .BarInfo {
-            visibility: hidden;
-            position: absolute;
-            width: 400px;
-            height: 700px;
-            background-color: rgb(242, 252, 255);
-            z-index: 2;
-            left: 75vw;
-            top: 15vh;
-        }
-        .BarInfo{
-            border-radius: 25px;
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-        }
-        .BarInfo p{
-            padding-left: 20px;
-        }
-        .BarInfo h2{
-            position: relative;
-            text-align: center;
-            padding-left: 10px;
-        }
-        .BarInfo h3{
-            text-align: center;
-            padding-left: 10px;
-        }
-        .BarInfo a{
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-            border-radius: 25px;
-            margin-left: 10px;
-            background-color: rgb(43, 144, 228);
-            color: aliceblue;
-            padding: 12px 14px;
-            text-decoration: none;
-            float: left;
-        }
-        .BarInfo a:hover{
-            background-color: rgb(86, 166, 231);
-            color: black;
-        }
-        .BarInfo #close{
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-            border-radius: 25px;
-            background-color: rgb(255, 61, 61);
-            color: aliceblue;
-            padding: 12px 14px;
-            left: 100%;
-            position: absolute;
-            cursor: pointer;
-        }
-        .BarInfo img{
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
-            border-radius: 25px;
-            width: 375px;
-            height: 211px;
-            margin-left: 12px;
-
-        }
-        .BarInfo #close:hover{
-            background-color: rgb(255, 127, 127);
-            color: black;
-        }
-        .TopNav #cockFilter1{
-            left: 50vw;
-            visibility: visible;
-            position: absolute;
-            z-index: 9;
-            
-        }
-        .TopNav #cockFilter2{
-            left: 50vw;
-            visibility: hidden;
-            position: absolute;
-            
-        }
-        .TopNav #pubFilter1{
-            left: 46vw;
-            visibility: visible;
-            position: absolute;
-            z-index: 9;
-            
-        }
-        .TopNav #pubFilter2{
-            left: 46vw;
-            visibility: hidden;
-            position: absolute;
-            
-        }
-        .TopNav #wineFilter1{
-            left: 42vw;
-            visibility: visible;
-            position: absolute;
-            z-index: 9;
-            
-        }
-        .TopNav #wineFilter2{
-            left: 42vw;
-            visibility: hidden;
-            position: absolute;
-            
-        }
-        .TopNav #cbFilter1{
-            left: 54vw;
-            visibility: visible;
-            position: absolute;
-            z-index: 9;
-            
-        }
-        .TopNav #cbFilter2{
-            left: 54vw;
-            visibility: hidden;
-            position: absolute;
-            
-        }
-
-        </style>
-    <title>Byward Bar Hoppers</title>
-    <link rel="icon" type="image/x-icon" href="Pub.png"></link>
-</head>
-<body>
-    <div class="TopNav">
-        <a id="routeButton" href="bingMapModule.html">Begin Route</a>
-        <a id="routeButtonInactive">Begin Route</a>
-        
-
-        <a id="cockFilter1" onclick="hideCock()"><img class="iconVisible" src="Cocktail.png"></a>
-        <a id="cockFilter2" onclick="hideCock()"><img class="iconHidden" src="Cocktail.png"></a>
-
-        <a id="pubFilter1" onclick="hidePub()"><img class="iconVisible" src="Pub.png"></a>
-        <a id="pubFilter2" onclick="hidePub()"><img class="iconHidden" src="Pub.png"></a>
-
-        <a id="wineFilter1" onclick="hideWine()"><img class="iconVisible" src="Wine.png"></a>
-        <a id="wineFilter2" onclick="hideWine()"><img class="iconHidden" src="Wine.png"></a>
-
-        <a id="cbFilter1" onclick="hideCb()"><img class="iconVisible" src="Craft_Beer.png"></a>
-        <a id="cbFilter2" onclick="hideCb()"><img class="iconHidden" src="Craft_Beer.png"></a>
-    </div>
-
-    <div id="map" style = ></div>
-
-    <div class="BarInfo" id="BarPopUp">
-        <a id="close" onclick="closePop()">X</a>
-        <h2 id="bar_name"></h2>
-        <img id="bar_img" src="#"></img>
-        <p id="type_of_bar"></p>
-        <p id="bar_rating"></p>
-        <p id="bar_tags"></p>
-        <p id="bar_address"></p>
-        <h3 id="Contact"></h3>
-        <p id="bar_phone"></p>
-        <p id="bar_email"></p>
-        <a id="bar_website" target="_blank" rel="noopener noreferrer"></a>
-    </div>
-
-    <script>
-        function hideCock(){
-            var button1 = document.getElementById("cockFilter1");
-            var button2 = document.getElementById("cockFilter2");
-            if(button1.style.visibility != "hidden"){
-                button1.style.visibility = "hidden";
-                button2.style.visibility = "visible";
+<html>
+    <head>
+        <title>Bar Hoppers Home</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=>, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <style>
+            body{
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                background-color: rgb(29, 29, 29);
             }
-            else{
-                button1.style.visibility = "visible";
-                button2.style.visibility = "hidden";
-            }
-        }
-        function hidePub(){
-            var button1 = document.getElementById("pubFilter1");
-            var button2 = document.getElementById("pubFilter2");
-            if(button1.style.visibility != "hidden"){
-                button1.style.visibility = "hidden";
-                button2.style.visibility = "visible";
-            }
-            else{
-                button1.style.visibility = "visible";
-                button2.style.visibility = "hidden";
-            }
-        }
-        function hideWine(){
-            var button1 = document.getElementById("wineFilter1");
-            var button2 = document.getElementById("wineFilter2");
-            if(button1.style.visibility != "hidden"){
-                button1.style.visibility = "hidden";
-                button2.style.visibility = "visible";
-            }
-            else{
-                button1.style.visibility = "visible";
-                button2.style.visibility = "hidden";
-            }
-        }
-        function hideCb(){
-            var button1 = document.getElementById("cbFilter1");
-            var button2 = document.getElementById("cbFilter2");
-            if(button1.style.visibility != "hidden"){
-                button1.style.visibility = "hidden";
-                button2.style.visibility = "visible";
-            }
-            else{
-                button1.style.visibility = "visible";
-                button2.style.visibility = "hidden";
-            }
-        }
-        function closePop() {
-        var popUp = document.getElementById("BarPopUp");
-        var routeActive = document.getElementById("routeButton");
-        var routeInactive = document.getElementById("routeButtonInactive");
-        routeInactive.style.visibility = "visible";
-        routeActive.style.visibility = "hidden";
-        popUp.style.visibility = "hidden";
-        }
-    </script>
-
-    <script type="module">
-        import geojson from "./Bars_file.json" assert { type: 'json' };
-        var map = L.map('map').setView([45.428477, -75.691509], 16);
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        L.control.scale({
-            metric: true,
-            imperial: true,
-            maxWidth: 100,
-            position: 'bottomleft'
-        }).addTo(map);
-
-        L.geoJSON(geojson, {
-            onEachFeature: function (feature, layer) {
-               
-                // Empty Arrays for Markers
-                var norm_icon = [30, 30];
-                var cocks = [];
-                var pubs = [];
-                var wines = [];
-                var cbs = [];
-
-                 // Custom Markers
-                for (var key in feature.properties) {
-                    if (key === 'Bar_Type') {
-                    if (feature.properties[key] === "Cocktail") {
-                        var cocktailIcon = new L.Icon({
-                            iconUrl: "Cocktail.png",
-                            iconSize: norm_icon,
-                            popupAnchor: [0, -10],
-                        })
-                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                            icon: cocktailIcon
-                        });
-                        cocks.push(marker);
-
-                    }
-                    if (feature.properties[key] === "Pub") {
-                        var pubicon = new L.Icon({
-                            iconUrl: "Pub.png",
-                            iconSize: norm_icon,
-                            popupAnchor: [0, -10]
-                        })
-                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                            icon: pubicon
-                        });
-                        pubs.push(marker);
-                    }
-                    if (feature.properties[key] === "Wine") {
-                        var wineicon = new L.Icon({
-                            iconUrl: "Wine.png",
-                            iconSize: norm_icon,
-                            popupAnchor: [0, -15]
-                        })
-                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                            icon: wineicon
-                        });
-                        wines.push(marker);
-                    }
-                    if (feature.properties[key] === "Craft Beer") {
-                        var cbicon = new L.Icon({
-                            iconUrl: "Craft_Beer.png",
-                            iconSize: norm_icon,
-                            popupAnchor: [0, -15]
-                        })
-                        var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                            icon: cbicon
-                        });
-                        cbs.push(marker);
-                    }
-                    }
-                    
-                }
-
-                // layers
-                var cockLayer = L.layerGroup(cocks);
-                var pubLayer = L.layerGroup(pubs);
-                var winesLayer = L.layerGroup(wines);
-                var cbLayer = L.layerGroup(cbs)
-
-                cockLayer.addTo(map);
-                pubLayer.addTo(map);
-                winesLayer.addTo(map);
-                cbLayer.addTo(map);
-
-
-                var cockFilterClose = document.getElementById("cockFilter1").addEventListener('click', function (event) {
-                    map.removeLayer(cockLayer);
-                });
-                var cockFilterOpen = document.getElementById("cockFilter2").addEventListener('click', function (event) {
-                    map.addLayer(cockLayer);
-                })
-                var pubFilterClose = document.getElementById("pubFilter1").addEventListener('click', function (event) {
-                    map.removeLayer(pubLayer);
-                });
-                var pubFilterOpen = document.getElementById("pubFilter2").addEventListener('click', function (event) {
-                    map.addLayer(pubLayer);
-                })
-                var wineFilterClose = document.getElementById("wineFilter1").addEventListener('click', function (event) {
-                    map.removeLayer(winesLayer);
-                });
-                var wineFilterOpen = document.getElementById("wineFilter2").addEventListener('click', function (event) {
-                    map.addLayer(winesLayer);
-                })
-                var cbFilterClose = document.getElementById("cbFilter1").addEventListener('click', function (event) {
-                    map.removeLayer(cbLayer);
-                });
-                var cbFilterOpen = document.getElementById("cbFilter2").addEventListener('click', function (event) {
-                    map.addLayer(cbLayer);
-                })
-                // Clickable Changeable Content
-                marker.on('click', function (e) {
-                    document.getElementById("bar_name").innerHTML = feature.properties.Name;
-                    
-                    document.getElementById("bar_rating").innerHTML = "⭐ " + feature.properties.Rating + " Stars (" + feature.properties.Total_Reviews + " Total Reviews)";
-                    document.getElementById("bar_tags").innerHTML = "🏷️ Tags: " + feature.properties.Tags;
-                    document.getElementById("bar_address").innerHTML = "📍 " + feature.properties.Address + ", " + feature.properties.Postal_Code;
-                    document.getElementById("Contact").innerHTML = "Contact Us!"
-                    document.getElementById("bar_phone").innerHTML = "📞 Phone Number: " + feature.properties.Phone;
-                    document.getElementById("bar_email").innerHTML = "📧 Email Address: " + feature.properties.Email;
-                    document.getElementById("bar_website").innerHTML = "Website"
-                    document.getElementById("bar_website").setAttribute("href", feature.properties.Website);
-
-                    //image stuff
-                    if(feature.properties.Bar_Type == "Pub"){
-                        document.getElementById("type_of_bar").innerHTML = "🍺 Bar Type: " + feature.properties.Bar_Type;
-                        document.getElementById("bar_img").src = "pub_desc.png"
-                    }
-                    else if(feature.properties.Bar_Type == "Wine"){
-                        document.getElementById("type_of_bar").innerHTML = "🍷 Bar Type: " + feature.properties.Bar_Type;
-                        document.getElementById("bar_img").src = "wine_desc.jpg"
-                    }
-                    else if(feature.properties.Bar_Type == "Cocktail"){
-                        document.getElementById("type_of_bar").innerHTML = "🍸 Bar Type: " + feature.properties.Bar_Type;
-                        document.getElementById("bar_img").src = "cock_desc.jpg"
-                    }
-                    else if(feature.properties.Bar_Type == "Craft Beer"){
-                        document.getElementById("type_of_bar").innerHTML = "🥫 Bar Type: " + feature.properties.Bar_Type;
-                        document.getElementById("bar_img").src = "cb_desc.jpg"
-                    }
-                    //Pop up function
-                    var popUp = document.getElementById("BarPopUp");
-                    var routeActive = document.getElementById("routeButton");
-                    var routeInactive = document.getElementById("routeButtonInactive");
-                    if (popUp.style.visibility === "hidden") {
-                        popUp.style.visibility = "visible";
-                        routeActive.style.visibility = "visible";
-                        routeInactive.style.visibility = "hidden";
-                    } else {
-                        popUp.style.visibility = "visible";
-                        routeActive.style.visibility = "visible";
-                        routeInactive.style.visibility = "hidden";
-                    
-                    }
-                })
-
-
-                // Hover Popup Content
-                var name = feature.properties.Name;
-                var rating = feature.properties.Rating
-                var bigIcon = marker.options.icon;
-
-                var popupContent = []
-
-                popupContent.push(name)
-                popupContent.push("⭐ Rating: " + rating);
-
-                marker.bindPopup(popupContent.join("<br/>"));
-                marker.on('mouseover', function (e) {
-                    bigIcon.options.iconSize = [35, 35];
-                    marker.setIcon(bigIcon);
-
-                    this.openPopup();
-                })
-                marker.on('mouseout', function (e) {
-                    bigIcon.options.iconSize = [30, 30];
-                    marker.setIcon(bigIcon);
-
-                    this.closePopup();
-                })
-            
-            }
-        
-        });
     
-    </script>
+            .Banner-Bg{
+                padding: 200px;
+                background-image:linear-gradient(0deg, rgba(0, 0, 0, 0.596), rgba(0, 0, 0, 0.596)), url("Images/BYWARD+STOCK-resized.jpg");
+                background-size: cover;
+                background-position-y: -150px;
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+
+            }
+            .Banner-Content{
+                border-radius: 25px;
+                background-color: rgba(0, 0, 0, 0.747);
+                padding: 20px;
+                color:aliceblue;
+                text-align: center;
+   
+            }
+            button{
+                background-color: rgb(255, 217, 0);
+                border: none;
+                color: black;
+                padding: 15px 24px;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.534);
+                
+
+            }
+            button:hover{
+                background-color: rgb(255, 232, 104);
+             
+
+            }
+           
+            .BodyContent{
+                display: block;
+            }
+            .BodyContent a{
+                position: relative;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+            }
+            .BodyContent h1{
+                color: aliceblue;
+                position: relative;
+                margin-left: 20px;
+            }
+            .BodyContent #headerRight{
+                margin-left: 65px;
+                text-align: center;
+            }
+            .AboutUs{
+                display: flex;
+                margin: 20px;
+            }
+            .AboutUs p{
+                color: aliceblue;
+                position: relative;
+                float: right;
+                font-size: large;
+                font-family: 'Courier New', Courier, monospace;
+                
+            }
+            .AboutUs img{
+                padding: 10px;
+                margin-top: auto;
+                margin-bottom: auto;
+                height: 50%;
+                width: 50%;   
+            }
+            .AboutUs #leafletPart{
+                text-align: right;
+                flex-direction: column;
+            }
+            .AboutUs #leafLogo{
+                padding: 10px;
+                margin-top: auto;
+                margin-bottom: auto;
+                height: 50%;
+                width: 150%;
+            }
+
+          
+        </style>
+    </head>
+    <body>
 
 
 
-</body>
+        <div class="Banner-Bg">
+            <div class="Banner-Content">
+                
+                <h1>Welcome To Byward's Bar Hopping Sytem</h1>
+                <h2>Begin your journey today for free and with ease!</h2>
+                <button id="startButt">Start Journey</button>
+            </div>
+        </div>
+        
+        <div class="BodyContent">
+            <a id="logo" href="Index.html"><img src="Images/litup.png"></a>
+            <h1>About Us</h1>
+            <div class="AboutUs">
+                <p>Our mission is to enhance the nightlife experience of locals and visitors alike by providing a comprehensive and user-friendly platform for barhopping in the vibrant Byward Market area. Our app offers personalized recommendations based on individual preferences, real-time updates on drink specials and events, and a seamless way to explore the area's diverse and dynamic bar scene. We are committed to promoting responsible drinking and fostering a sense of community among bar-goers, while supporting local businesses and contributing to the cultural and economic vitality of the neighborhood.
+                <br><br>At Byward Bar Hoppers, we are passionate about nightlife and the unique energy of the Byward Market area. Our team of experienced developers, designers, and nightlife enthusiasts have come together to create a one-of-a-kind app that helps users make the most of their barhopping experience in this vibrant neighborhood.
+                <br><br>We believe that the Byward Market area is home to some of the best bars, pubs, and clubs in the city, and we want to help people discover and explore them all. Our app is designed to be intuitive, user-friendly, and customizable, allowing users to tailor their barhopping experience to their individual preferences.
+                <br><br>Whether you're looking for a cozy pub with craft beer on tap, a trendy cocktail lounge, or a high-energy club with live music, our app has got you covered. We provide real-time updates on drink specials and events, as well as personalized recommendations based on your interests and location.
+                <br><br>At Byward Bar Hoppers, we are committed to promoting responsible drinking and ensuring a safe and enjoyable experience for all. We believe that by supporting local businesses and contributing to the cultural and economic vitality of the neighborhood, we can help make the Byward Market area an even more exciting and vibrant place to be.
+                <br><br>Thank you for choosing Byward Bar Hoppers to be your guide to the best of Byward Market's nightlife. We look forward to seeing you out there!</p>
+                <img src="Images/mapmod.png"></img>
+            </div>
+            <h1 id="headerRight">Leaflet</h1>
+            <div class="AboutUs" id="leafletPart">
+                <img src="Images/leafletlogo.png" id="leafLogo">
+                <p>Leaflet is a popular open-source JavaScript library used for creating mobile-friendly interactive maps and web-based mapping applications. It was first released in 2011 and has since grown to become one of the most widely used mapping libraries on the web.
+                <br><br>Leaflet provides an easy-to-use interface for working with maps and offers a range of features and options for customizing the appearance and functionality of maps. Some of the key features of Leaflet include:
+                    
+                    <br><br>• Marker and layer support: Leaflet allows you to add markers, popups, and various types of layers to your map, making it easy to display different types of data and information.
+                    <br>• Custom map styling: With Leaflet, you can customize the appearance of your map by changing the colors, adding labels, and adjusting the zoom level and center point.
+                    <br>• Interactivity: Leaflet provides support for various types of interactivity, including panning, zooming, and clicking on markers and layers.
+                    <br>• Mobile support: Leaflet is designed to work well on mobile devices, with support for touch gestures and responsive design.
+                    <br>• Plugin ecosystem: Leaflet has a large and active plugin ecosystem, with a wide range of plugins available for adding additional functionality to your maps.
+   
+                <br><br>Leaflet is often used in combination with other web development technologies such as HTML, CSS, and JavaScript frameworks like React or Angular. Its popularity and ease of use make it a great choice for creating interactive maps and web-based mapping applications.
+                </p>
+            </div>
+            <h1>Cultural Spaces Inventory</h1>
+            <div class="AboutUs">
+                <p>These data were gathered by Apartment 613 Community Initiatives as part of a project with the City of Ottawa to build an updated inventory of spaces for cultural activities and events (broadly defined) in Ottawa. This project was an update to previous cultural mapping projects, such as Ottawa XYZ and the Cultural Experiences Inventory, and is related to Section 2.2.6 of the Official Plan.
+                <br><br><b>Accuracy</b>
+                <br>“Culture” is a complicated concept. It can mean many different things. Therefore, there is no simple answer to the question of what constitutes a space for cultural activities or events. The project partners used a broad definition that includes spaces in several categories, including venues,
+                studios, learning spaces, community spaces (including places of worship), food, sport, stores, heritage, nature (including parks), and public art. The project is ongoing and we are always open to suggestions on how to improve this dataset. The City will be maintaining this dataset going forward, and we may revisit the categorization and types of spaces we include in the future.
+                When using these data, it is important to keep in the mind the following:
+                <br>1. Not all categories are necessarily relevant to all users for all purposes.
+                <br>2. The dataset, while extensive (3,800+ spaces), may not be exhaustive. If you notice anything that is missing, please contact the Data Steward.
+                <br>3. Change occurs frequently. The City will be developing a plan for the long-term maintenance of this dataset. The data will be updated frequently, but there can be outdated information. If you notice anything that is out-of-date, please contact the Data Steward.
+                <br>4. The fields called “Size (Capacity/# seats)” and “Accessibility” have not yet been populated, as the research is still ongoing.
+                <br><br><b>Update Frequency:</b> As needed
+                <br><br><b>* information sourced directly from open ottawa</b>
+                </p>
+                <img src="Images/12821512_1039315462796901_4340375593056581469_n.png">
+
+            </div>
+
+        </div>
+        <script type="text/javascript">
+            document.getElementById("startButt").onclick = function(){
+                location.href = "MapModule.html";
+            }
+
+            
+        </script>
+    </body>
 </html>
